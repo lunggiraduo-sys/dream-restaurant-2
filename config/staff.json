@@ -1,0 +1,19 @@
+{
+  "waiters": [
+    { "id": "w1", "name": "李小梅", "mobility": 70, "charm": 80, "patience": 65, "salary": 4500, "minStar": 1, "tier": 1, "note": "招牌笑容，客人吃得舒心" },
+    { "id": "w2", "name": "王大伟", "mobility": 85, "charm": 55, "patience": 70, "salary": 4200, "minStar": 1, "tier": 1, "note": "跑堂飞快，不太会说话" },
+    { "id": "w3", "name": "张晓芳", "mobility": 65, "charm": 75, "patience": 80, "salary": 4000, "minStar": 1, "tier": 1, "note": "性格温和，稳定省心" },
+    { "id": "w4", "name": "赵磊", "mobility": 90, "charm": 50, "patience": 75, "salary": 4800, "minStar": 1, "tier": 1, "note": "腿脚最勤，脸皮最厚" },
+    { "id": "w5", "name": "林悦", "mobility": 80, "charm": 88, "patience": 72, "salary": 5800, "minStar": 2, "tier": 2, "note": "曾在五星酒店任职" },
+    { "id": "w6", "name": "孙浩", "mobility": 95, "charm": 62, "patience": 70, "salary": 6000, "minStar": 2, "tier": 2, "note": "高峰期的救火队员" },
+    { "id": "w7", "name": "周晴", "mobility": 88, "charm": 95, "patience": 85, "salary": 7600, "minStar": 3, "tier": 3, "note": "米其林餐厅首席服务" },
+    { "id": "w8", "name": "吴迪", "mobility": 98, "charm": 76, "patience": 82, "salary": 7800, "minStar": 3, "tier": 3, "note": "跑动速度接近极限" }
+  ],
+  "chefs": [
+    { "id": "c1", "name": "陈师傅", "cooking": 80, "speed": 70, "salary": 7000, "minStar": 1, "tier": 1, "note": "红烧肉做了二十年" },
+    { "id": "c2", "name": "刘大厨", "cooking": 70, "speed": 85, "salary": 6500, "minStar": 1, "tier": 1, "note": "出菜快，火候差一点" },
+    { "id": "c3", "name": "郭明", "cooking": 88, "speed": 78, "salary": 8800, "minStar": 2, "tier": 2, "note": "淮扬菜科班出身" },
+    { "id": "c4", "name": "何雯", "cooking": 76, "speed": 92, "salary": 8500, "minStar": 2, "tier": 2, "note": "灶台上的疾风" },
+    { "id": "c5", "name": "秦岳", "cooking": 95, "speed": 88, "salary": 11500, "minStar": 3, "tier": 3, "note": "国宴厨师团队出身" }
+  ]
+}
