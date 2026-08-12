@@ -93,11 +93,12 @@
   <script>
     window.__dr2_logs = [];
     window.__dr2_errors = [];
+    const _ser = (x) => (x instanceof Error) ? (x.stack || x.message || String(x)) : x;
     const _origLog = console.log, _origErr = console.error;
-    console.log = function(...a){ window.__dr2_logs.push(['LOG'].concat(a)); _origLog.apply(console, a); };
-    console.error = function(...a){ window.__dr2_errors.push(['ERR'].concat(a)); _origErr.apply(console, a); };
+    console.log = function(...a){ window.__dr2_logs.push(['LOG'].concat(a.map(_ser))); _origLog.apply(console, a); };
+    console.error = function(...a){ window.__dr2_errors.push(['ERR'].concat(a.map(_ser))); _origErr.apply(console, a); };
     window.onerror = function(msg, url, line, col, err){
-      window.__dr2_errors.push(['ONERROR', msg, url, line, col, err && err.stack]);
+      window.__dr2_errors.push(['ONERROR', msg, url, line, col, err && (err.stack || err.message)]);
     };
     window.addEventListener('unhandledrejection', function(e){
       window.__dr2_errors.push(['UNHANDLED', String(e.reason), e.reason && e.reason.stack]);
