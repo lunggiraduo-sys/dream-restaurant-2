@@ -70,7 +70,7 @@ export function newGameState() {
       })),
     },
     staff: { waiters, chefs },
-    menu: { dishes: c.dishes.dishes.map((d) => ({ ...d })) },
+    menu: { dishes: _cfg.dishes.dishes.map((d) => ({ ...d })) },
     time: {
       day: 1,
       month: 1,
