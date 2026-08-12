@@ -1,0 +1,16 @@
+{
+  "dishes": [
+    { "id": "d1", "name": "红烧肉",   "type": "主餐", "cost": 18, "price": 82, "cookTime": 4, "flavor": 85, "enabled": true },
+    { "id": "d2", "name": "宫保鸡丁", "type": "主餐", "cost": 15, "price": 70, "cookTime": 3, "flavor": 82, "enabled": true },
+    { "id": "d3", "name": "糖醋里脊", "type": "主餐", "cost": 16, "price": 74, "cookTime": 4, "flavor": 80, "enabled": true },
+    { "id": "d4", "name": "清蒸鲈鱼", "type": "主餐", "cost": 25, "price": 106, "cookTime": 5, "flavor": 88, "enabled": true },
+    { "id": "d5", "name": "麻婆豆腐", "type": "主餐", "cost": 8,  "price": 46, "cookTime": 3, "flavor": 78, "enabled": true },
+    { "id": "d6", "name": "鱼香肉丝", "type": "主餐", "cost": 12, "price": 58, "cookTime": 3, "flavor": 80, "enabled": true },
+    { "id": "d7", "name": "蛋花汤",   "type": "汤品", "cost": 4,  "price": 22, "cookTime": 1, "flavor": 75, "enabled": true },
+    { "id": "d8", "name": "酸辣汤",   "type": "汤品", "cost": 6,  "price": 26, "cookTime": 2, "flavor": 76, "enabled": true },
+    { "id": "d9", "name": "拍黄瓜",   "type": "前菜", "cost": 3,  "price": 14, "cookTime": 1, "flavor": 72, "enabled": true },
+    { "id": "d10", "name": "皮蛋豆腐", "type": "前菜", "cost": 4,  "price": 18, "cookTime": 1, "flavor": 74, "enabled": true },
+    { "id": "d11", "name": "担担面",   "type": "主食", "cost": 8,  "price": 34, "cookTime": 2, "flavor": 79, "enabled": true },
+    { "id": "d12", "name": "扬州炒饭", "type": "主食", "cost": 7,  "price": 30, "cookTime": 3, "flavor": 77, "enabled": true }
+  ]
+}
