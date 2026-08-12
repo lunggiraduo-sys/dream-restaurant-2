@@ -43,7 +43,8 @@ const WALK_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec
 let _renderer = null;
 
 export function createRenderer(canvas) {
-  _renderer = new Renderer(canvas);
+  const el = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
+  _renderer = new Renderer(el);
   return _renderer;
 }
 
