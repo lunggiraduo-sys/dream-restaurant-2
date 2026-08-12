@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="梦幻西餐">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/icons/icon.svg">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/ui.css">
+  <link rel="stylesheet" href="css/restaurant.css">
+  <title>梦幻西餐厅2</title>
+</head>
+<body>
+  <!-- ===== 主菜单 ===== -->
+  <section id="screen-menu" class="screen active">
+    <div class="menu-box">
+      <h1 class="game-title">梦幻西餐厅<span class="title-2">2</span></h1>
+      <p class="subtitle">北京 · 餐厅经营模拟</p>
+      <div class="menu-btns">
+        <button class="btn-primary" data-action="new">新游戏</button>
+        <button class="btn" data-action="continue">继续游戏</button>
+        <button class="btn" data-action="settings">设置</button>
+      </div>
+      <p class="hint">把小店从 ★1 做到 ★3，冲上杂志排行榜</p>
+    </div>
+  </section>
+
+  <!-- ===== 餐厅经营 ===== -->
+  <section id="screen-restaurant" class="screen">
+    <div class="statusbar">
+      <span id="sys-money">💰 ¥3,000,000</span>
+      <span id="sys-name">🍴 阿奇餐厅</span>
+      <span id="sys-star">⭐ 1星</span>
+    </div>
+    <div class="kpibar">
+      <span class="kpi" id="kpi-money">💰 ¥3,000,000</span>
+      <span class="kpi" id="kpi-star">⭐ 1</span>
+      <span class="kpi" id="kpi-day">📅 第1月·第1天</span>
+      <span class="kpi" id="kpi-today">👥 0</span>
+      <span class="kpi" id="kpi-time">🕐 10:00</span>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="restaurant-canvas"></canvas>
+      <button class="speed-btn" data-action="speed" aria-label="切换游戏速度">⏩ 1×</button>
+      <div class="canvas-hint" id="canvas-hint">点「营业」开始今日经营 · 1 游戏时 ≈ 现实 30 秒</div>
+    </div>
+    <nav class="opbar">
+      <button class="op" data-screen="staff">员工</button>
+      <button class="op" data-screen="menu-mgmt">菜单</button>
+      <button class="op op-go" data-action="open">营业</button>
+      <button class="op" data-screen="decor">装修</button>
+      <button class="op" data-screen="report">报表</button>
+    </nav>
+  </section>
+
+  <!-- ===== 员工管理 ===== -->
+  <section id="screen-staff" class="screen panel-screen">
+    <header class="panel-head"><button class="back" data-screen="restaurant">‹</button><h2>员工管理</h2></header>
+    <div class="panel-body" id="staff-body"><p class="placeholder">（阶段3 接入员工系统）</p></div>
+  </section>
+
+  <!-- ===== 菜单管理 ===== -->
+  <section id="screen-menu-mgmt" class="screen panel-screen">
+    <header class="panel-head"><button class="back" data-screen="restaurant">‹</button><h2>菜单管理</h2></header>
+    <div class="panel-body" id="menu-body"><p class="placeholder">（阶段3 接入菜单系统）</p></div>
+  </section>
+
+  <!-- ===== 装修 ===== -->
+  <section id="screen-decor" class="screen panel-screen">
+    <header class="panel-head"><button class="back" data-screen="restaurant">‹</button><h2>内部改建</h2></header>
+    <div class="panel-body" id="decor-body"><p class="placeholder">（MVP 装修固定 1 级）</p></div>
+  </section>
+
+  <!-- ===== 报表 ===== -->
+  <section id="screen-report" class="screen panel-screen">
+    <header class="panel-head"><button class="back" data-screen="restaurant">‹</button><h2>经营报表</h2></header>
+    <div class="panel-body" id="report-body"><p class="placeholder">（阶段2/3 接入日终与月末报表）</p></div>
+  </section>
+
+  <!-- ===== 设置 ===== -->
+  <section id="screen-settings" class="screen panel-screen">
+    <header class="panel-head"><button class="back" data-screen="menu">‹</button><h2>设置</h2></header>
+    <div class="panel-body" id="settings-body">
+      <p class="placeholder">设置：音效 / 清空存档</p>
+      <button class="btn danger" data-action="reset-save">清空存档</button>
+    </div>
+  </section>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
