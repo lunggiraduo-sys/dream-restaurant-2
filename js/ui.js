@@ -130,7 +130,7 @@ export function updateHUD() {
     }
     if (s.runtime.eventLog && s.runtime.eventLog.length) {
       const ev = s.runtime.eventLog[s.runtime.eventLog.length - 1];
-      if (ev && ev._lastShown !== ev.time.hour + ':' + ev.time.minute) {
+      if (ev && ev.time && ev._lastShown !== ev.time.hour + ':' + ev.time.minute) {
         ev._lastShown = ev.time.hour + ':' + ev.time.minute;
         toast('📢 ' + ev.name, ev.desc + (ev.message ? '<br>' + ev.message : ''), ev.id === 'thief' ? 'bad' : 'info');
       }
