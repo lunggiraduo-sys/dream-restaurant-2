@@ -90,15 +90,6 @@
     </div>
   </section>
 
-  <script>
-    window.__dr2_errors = [];
-    window.onerror = function(msg, url, line, col, err){
-      window.__dr2_errors.push(String(msg) + ' @' + (url||'') + ':' + line + ':' + col + ' ' + (err && (err.stack || err.message) || ''));
-    };
-    window.addEventListener('unhandledrejection', function(e){
-      window.__dr2_errors.push('UNHANDLED ' + String(e.reason) + ' ' + (e.reason && e.reason.stack || ''));
-    });
-  </script>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
