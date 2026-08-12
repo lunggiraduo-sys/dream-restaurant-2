@@ -66,6 +66,7 @@ export function createRenderer(canvas, state) {
   const el = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
   _renderer = new Renderer(el);
   if (state) _renderer.setState(state);
+  _renderer._preloadSprites();
   return _renderer;
 }
 
@@ -80,6 +81,7 @@ class Renderer {
     this.state = null;
     this.size = { w: 0, h: 0, dpr: 1 };
     this.iso = { cx: 0, cy: 0, tw: 1, th: 1, scale: 1 };
+    this._sprites = {};
     this._t = 0;
     this.resize();
     window.addEventListener('resize', () => this.resize());
@@ -847,19 +849,22 @@ class Renderer {
   /* ============ 人物 ============ */
 
   _drawCustomer(c) {
-    this._drawPerson(c.x, c.y, c.z || 0, this._customerPalette(c), c.state, c.patience, c.patienceMax || c.maxPatience, null, c.id);
+    const keys = ['customer_red', 'customer_blue', 'customer_green', 'customer_purple'];
+    const idh = String(c.id == null ? 'x' : c.id).split('').reduce((a, ch) => a + ch.charCodeAt(0), 0);
+    const spriteKey = keys[idh % 4];
+    this._drawPerson(c.x, c.y, c.z || 0, this._customerPalette(c), c.state, c.patience, c.patienceMax || c.maxPatience, null, c.id, null, spriteKey);
   }
 
   _drawWaiter(w) {
     this._drawPerson(w.x, w.y, w.z || 0,
       { body: '#2b3a55', bodyD: '#1a2236', apron: '#fbfdff', head: SKIN, hair: '#3b2f2a', hat: 'waiter', accent: '#c0392b' },
-      w.state || 'idle', null, null, w.actionEmoji, 'waiter');
+      w.state || 'idle', null, null, w.actionEmoji, 'waiter', 'waiter');
   }
 
   _drawChef(c) {
     this._drawPerson(c.x, c.y, c.z || 0,
       { body: '#f4f6f9', bodyD: '#d7dde6', apron: '#f4f6f9', head: SKIN, hair: '#2a2a2a', hat: 'chef', accent: '#e5e7eb' },
-      c.state || 'idle', null, null, null, 'chef');
+      c.state || 'idle', null, null, null, 'chef', 'chef');
   }
 
   _customerPalette(c) {
@@ -871,7 +876,7 @@ class Renderer {
     };
   }
 
-  _drawPerson(x, y, z, p, state, patience, maxPatience, emoji, idTag, role) {
+  _drawPerson(x, y, z, p, state, patience, maxPatience, emoji, idTag, role, spriteKey) {
     const ctx = this.ctx;
     const pos = this.toIso(x, y, z);
     const sc = this.iso.scale * 1.5;
@@ -887,6 +892,27 @@ class Renderer {
     sh.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = sh;
     ctx.beginPath(); ctx.ellipse(0, 0, 14 * sc, 6 * sc, 0, 0, Math.PI * 2); ctx.fill();
+
+    // 精灵贴图（真实插画质感，优先于程序绘制；未就绪时降级到程序绘制）
+    const spr = spriteKey ? this._ensureSprite(spriteKey) : null;
+    if (spr && spr.ready) {
+      const bb = spr.bbox;
+      const chH = this.iso.scale * 1.5 * 72;
+      const bw = bb.maxX - bb.minX, bh = bb.maxY - bb.minY;
+      const dw = chH * (bw / bh), dh = chH;
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(spr.img, bb.minX, bb.minY, bw, bh, -dw / 2, -dh + 4 * sc, dw, dh);
+      const topY = -dh + 4 * sc;
+      if (patience !== undefined && maxPatience) {
+        const ratio = Math.max(0, patience / maxPatience);
+        const color = ratio > 0.5 ? '#34d399' : ratio > 0.25 ? '#f59e0b' : '#ef4444';
+        ctx.strokeStyle = color; ctx.lineWidth = 2.6;
+        ctx.beginPath(); ctx.arc(0, topY - 6 * sc, 14 * sc, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * ratio); ctx.stroke();
+      }
+      if (emoji) this._drawEmojiBubble(0, topY - 20 * sc, emoji);
+      ctx.restore();
+      return;
+    }
 
     if (!seated) {
       // 腿
@@ -1032,6 +1058,51 @@ class Renderer {
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(emoji, 0, 1);
     ctx.restore();
+  }
+
+  /* ============ 精灵图加载 ============ */
+
+  _preloadSprites() {
+    ['waiter', 'chef', 'customer_red', 'customer_blue', 'customer_green', 'customer_purple']
+      .forEach((k) => this._ensureSprite(k));
+  }
+
+  _ensureSprite(key) {
+    if (!this._sprites) this._sprites = {};
+    let e = this._sprites[key];
+    if (e) return e;
+    const img = new Image();
+    e = { img, bbox: null, ready: false };
+    this._sprites[key] = e;
+    img.onload = () => {
+      try {
+        const cw = img.naturalWidth, ch = img.naturalHeight;
+        const oc = document.createElement('canvas');
+        oc.width = cw; oc.height = ch;
+        const octx = oc.getContext('2d');
+        octx.drawImage(img, 0, 0);
+        const d = octx.getImageData(0, 0, cw, ch).data;
+        let minX = cw, minY = ch, maxX = 0, maxY = 0, found = false;
+        for (let y = 0; y < ch; y++) {
+          for (let x = 0; x < cw; x++) {
+            if (d[(y * cw + x) * 4 + 3] > 16) {
+              found = true;
+              if (x < minX) minX = x;
+              if (x > maxX) maxX = x;
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+        e.bbox = found ? { minX, minY, maxX, maxY } : { minX: 0, minY: 0, maxX: cw, maxY: ch };
+        e.ready = true;
+      } catch (err) {
+        e.ready = false;
+      }
+    };
+    img.onerror = () => { e.ready = false; };
+    img.src = 'assets/sprites/' + key + '.png?v=1';
+    return e;
   }
 
   /* ============ 队列 / 气泡 / 粒子 ============ */
