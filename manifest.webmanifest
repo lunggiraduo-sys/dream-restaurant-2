@@ -1,0 +1,19 @@
+{
+  "name": "梦幻西餐厅2",
+  "short_name": "阿奇餐厅",
+  "description": "现代化复刻经典经营模拟游戏《梦幻西餐厅2》",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1f172a",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "./assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
