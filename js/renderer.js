@@ -770,7 +770,7 @@ class Renderer {
 
   _customerPalette(c) {
     const colors = TYPE_COLORS[c.type] || TYPE_COLORS.normal;
-    const idHash = (c.id || 'x').split('').reduce((a, ch) => a + ch.charCodeAt(0), 0);
+    const idHash = String(c.id == null ? 'x' : c.id).split('').reduce((a, ch) => a + ch.charCodeAt(0), 0);
     return {
       body: colors[0],
       head: '#fde68a',
