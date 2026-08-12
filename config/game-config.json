@@ -1,0 +1,91 @@
+{
+  "version": "1.0.0",
+  "restaurantName": "阿奇餐厅",
+  "initialMoney": 30000,
+  "operatingHours": { "start": 10, "end": 22 },
+  "realSecPerGameHour": 30,
+  "timeScale": 1,
+  "daysPerMonth": 7,
+  "customerSpawn": {
+    "basePerHour": 5,
+    "peakMultiplier": 2.0,
+    "weekendMultiplier": 1.5
+  },
+  "starRequirements": {
+    "1": { "customers": 0,    "rating": 0,  "minProfit": 0 },
+    "2": { "customers": 480,  "rating": 68, "minProfit": 8000 },
+    "3": { "customers": 780,  "rating": 76, "minProfit": 14000 },
+    "4": { "customers": 1020, "rating": 82, "minProfit": 19000 },
+    "5": { "customers": 1200, "rating": 84, "minProfit": 24000 }
+  },
+  "starBonuses": { "1": 0, "2": 12000, "3": 35000, "4": 80000, "5": 180000 },
+  "upgrades": {
+    "decor": {
+      "name": "店面装修", "icon": "🎨",
+      "desc": "格调越高，顾客评价越好，也更愿意进店",
+      "levels": [
+        { "cost": 0, "label": "简装", "effect": "评价基准 60" },
+        { "cost": 12000, "label": "温馨", "effect": "评价基准 70 · 客流 +5%" },
+        { "cost": 28000, "label": "雅致", "effect": "评价基准 80 · 客流 +10%" },
+        { "cost": 52000, "label": "精致", "effect": "评价基准 90 · 客流 +16%" },
+        { "cost": 90000, "label": "奢华", "effect": "评价基准 100 · 客流 +24%" }
+      ]
+    },
+    "tables": {
+      "name": "增设餐桌", "icon": "🪑",
+      "desc": "同时接待更多客人，高峰期不再排长队",
+      "levels": [
+        { "cost": 0, "label": "8 张桌" },
+        { "cost": 12000, "label": "9 张桌" },
+        { "cost": 26000, "label": "10 张桌" },
+        { "cost": 45000, "label": "11 张桌" },
+        { "cost": 70000, "label": "12 张桌" }
+      ]
+    },
+    "kitchen": {
+      "name": "厨房设备", "icon": "🔥",
+      "desc": "更好的灶具让出菜更快，减少等餐流失",
+      "levels": [
+        { "cost": 0, "label": "老式灶台", "effect": "出菜速度 100%" },
+        { "cost": 18000, "label": "商用燃气", "effect": "出菜速度 115%" },
+        { "cost": 42000, "label": "双炉不锈钢", "effect": "出菜速度 132%" },
+        { "cost": 80000, "label": "专业中央厨房", "effect": "出菜速度 155%" }
+      ]
+    },
+    "ambience": {
+      "name": "店内氛围", "icon": "🎵",
+      "desc": "音乐与绿植让客人更有耐心等待",
+      "levels": [
+        { "cost": 0, "label": "无", "effect": "耐心 100%" },
+        { "cost": 14000, "label": "背景音乐", "effect": "耐心 112%" },
+        { "cost": 34000, "label": "绿植软装", "effect": "耐心 125%" },
+        { "cost": 65000, "label": "现场钢琴", "effect": "耐心 140%" }
+      ]
+    }
+  },
+  "extraTables": [
+    { "id": "t9",  "type": "2", "x": 0.50, "y": 0.32 },
+    { "id": "t10", "type": "2", "x": 0.50, "y": 0.50 },
+    { "id": "t11", "type": "2", "x": 0.50, "y": 0.68 },
+    { "id": "t12", "type": "2", "x": 0.50, "y": 0.86 }
+  ],
+  "maxStaff": { "waiters": 4, "chefs": 2 },
+  "maxStaffByStar": {
+    "1": { "waiters": 4, "chefs": 2 },
+    "2": { "waiters": 5, "chefs": 3 },
+    "3": { "waiters": 6, "chefs": 3 },
+    "4": { "waiters": 7, "chefs": 4 },
+    "5": { "waiters": 8, "chefs": 5 }
+  },
+  "decorLevel": 1,
+  "tables": [
+    { "id": "t1", "type": "2", "x": 0.28, "y": 0.32 },
+    { "id": "t2", "type": "2", "x": 0.72, "y": 0.32 },
+    { "id": "t3", "type": "2", "x": 0.28, "y": 0.50 },
+    { "id": "t4", "type": "2", "x": 0.72, "y": 0.50 },
+    { "id": "t5", "type": "2", "x": 0.28, "y": 0.68 },
+    { "id": "t6", "type": "2", "x": 0.72, "y": 0.68 },
+    { "id": "t7", "type": "2", "x": 0.28, "y": 0.86 },
+    { "id": "t8", "type": "2", "x": 0.72, "y": 0.86 }
+  ]
+}
