@@ -105,7 +105,8 @@ export function updateHUD() {
   setText('#sys-star', '⭐ ' + s.player.currentStar + '星');
   setText('#kpi-money', '💰 ' + fmtMoney(s.player.money));
   setText('#kpi-star', '⭐ ' + s.player.currentStar);
-  setText('#kpi-today', '👥 ' + (d.customers || 0));
+  const liveCustomers = (s.runtime && s.runtime.customers) ? s.runtime.customers.length : 0;
+  setText('#kpi-today', '👥 ' + liveCustomers);
   setText('#kpi-day', '📅 第' + s.time.month + '月·第' + s.time.day + '天');
   setText('#kpi-time', '🕐 ' + pad(s.time.hour) + ':' + pad(Math.floor(s.time.minute)));
   const go = $('.op-go');
