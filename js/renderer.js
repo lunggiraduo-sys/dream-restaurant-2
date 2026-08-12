@@ -1,34 +1,42 @@
 /* 梦幻西餐厅2 · 等角投影 Canvas 渲染器
- * 2.5D isometric / diamond floor, warm bistro style
+ * 2.5D isometric / diamond floor, 暖色温馨 bistro 风格
  */
 
 const COLORS = {
-  floor: '#5e5b56',
-  floorLight: '#6c6963',
-  floorDark: '#4f4c47',
-  grout: '#3d3b37',
-  wall: '#f5f0e6',
-  wallTrim: '#8b5a2b',
-  wallTrimDark: '#6d4420',
-  windowFrame: '#5a4632',
-  glassDay: '#d6e8f5',
-  glassNight: '#1a2332',
-  kitchen: '#8b5a2b',
-  kitchenTop: '#a06d3a',
-  steel: '#9ca3af',
+  // 暖色木地板
+  floor: '#8a5a32',
+  floorLight: '#9c6b3e',
+  floorDark: '#6f4626',
+  plank: '#5a3a1f',
+  // 墙面（奶油 + 木护墙板）
+  wall: '#f7ecd8',
+  wallUpper: '#fbf4e6',
+  wainscot: '#a9743f',
+  wainscotDark: '#8a5d31',
+  trim: '#6d4420',
+  trimDark: '#523418',
+  windowFrame: '#6d4420',
+  glassDay: '#cfe6f3',
+  glassNight: '#1b2740',
+  kitchen: '#a9743f',
+  kitchenTop: '#c08a4f',
+  steel: '#b6bcc6',
   door: '#7a4e2e',
   carpet: '#b91c1c',
   carpetDark: '#8f1414',
+  rug: '#c2410c',
+  rugEdge: '#f59e0b',
   tableBase: '#6d4420',
-  clothFree: '#fff0f5',
-  clothOcc: '#ffb6c1',
-  clothDirty: '#9ca3af',
-  chair: '#8b4513',
-  chairDark: '#5c2e0c',
-  plantPot: '#a05a2c',
-  plantLeaf: '#4a7c59',
+  clothFree: '#fff1f5',
+  clothOcc: '#ffc2cf',
+  clothDirty: '#aab0b8',
+  chair: '#8a5a2c',
+  chairDark: '#5c3a1a',
+  plantPot: '#b06a32',
+  plantLeaf: '#4e8a5e',
   plate: '#fff',
-  gold: '#fbbf24'
+  gold: '#fbbf24',
+  lampGlow: 'rgba(255,221,150,0.55)'
 };
 
 const TYPE_COLORS = {
@@ -37,6 +45,8 @@ const TYPE_COLORS = {
   family: ['#f97316', '#fb923c', '#c2410c'],
   gourmet: ['#7c3aed', '#a78bfa', '#5b21b6']
 };
+
+const HAIR_COLORS = ['#3b2f2a', '#5b3a29', '#1f2937', '#7c5a3a', '#4b3b6b', '#6b3a3a', '#2f3a4b', '#8a6d3b'];
 
 const WALK_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
 
@@ -100,6 +110,7 @@ class Renderer {
     if (!s) return;
 
     this._drawRoom();
+    this._drawRug();
     this._drawPictures();
     this._drawKitchen();
 
@@ -144,8 +155,8 @@ class Renderer {
       grad.addColorStop(0, '#0f172a');
       grad.addColorStop(1, '#1e293b');
     } else {
-      grad.addColorStop(0, '#e0f2fe');
-      grad.addColorStop(1, '#f0f9ff');
+      grad.addColorStop(0, '#eaf6ff');
+      grad.addColorStop(1, '#fef7ea');
     }
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
@@ -153,10 +164,10 @@ class Renderer {
     // 城市远景剪影
     this._drawCityscape(night);
 
-    // 地板菱形
+    // 地板（暖色木地板）
     this._drawFloor();
 
-    // 后墙和侧墙
+    // 后墙和侧墙（奶油墙 + 木护墙板）
     this._drawWalls();
   }
 
@@ -169,24 +180,23 @@ class Renderer {
 
   _drawCityscape(night) {
     const ctx = this.ctx;
-    const { w, h } = this.size;
+    const { w } = this.size;
     ctx.save();
-    ctx.globalAlpha = 0.35;
+    ctx.globalAlpha = 0.32;
     const baseY = this.iso.cy - this.iso.th * 2.2;
-    const colors = night ? ['#334155', '#475569', '#1e293b'] : ['#94a3b8', '#cbd5e1', '#64748b'];
-    const seed = (x) => Math.sin(x * 12.9898) * 43758.5453 % 1;
+    const colors = night ? ['#334155', '#475569', '#1e293b'] : ['#9fb3c8', '#c3d4e6', '#7e93a8'];
+    const seed = (x) => Math.abs(Math.sin(x * 12.9898) * 43758.5453 % 1);
     for (let i = 0; i < 40; i++) {
       const bx = (i / 40) * w + Math.sin(i * 3) * 18;
-      const bw = 18 + Math.abs(seed(i)) * 28;
-      const bh = 40 + Math.abs(seed(i + 10)) * 90;
-      const bh2 = 40 + Math.abs(seed(i + 20)) * 60;
+      const bw = 18 + seed(i) * 28;
+      const bh = 40 + seed(i + 10) * 90;
+      const bh2 = 40 + seed(i + 20) * 60;
       ctx.fillStyle = colors[i % colors.length];
       ctx.fillRect(bx, baseY - bh, bw, bh);
       ctx.fillStyle = colors[(i + 1) % colors.length];
       ctx.fillRect(bx + 6, baseY - bh2, bw - 12, bh2);
-      // 窗户灯光
       if (night && i % 3 === 0) {
-        ctx.fillStyle = 'rgba(253,224,71,0.45)';
+        ctx.fillStyle = 'rgba(253,224,71,0.5)';
         for (let r = 0; r < 3; r++) {
           for (let c = 0; c < 2; c++) {
             ctx.fillRect(bx + 8 + c * 8, baseY - bh + 12 + r * 12, 4, 6);
@@ -203,14 +213,17 @@ class Renderer {
     const tiles = 8;
 
     ctx.save();
-    // 地板底色
     const corners = [
       this.toIso(0, 0),
       this.toIso(1, 0),
       this.toIso(1, 1),
       this.toIso(0, 1)
     ];
-    ctx.fillStyle = COLORS.floor;
+    // 地板底色
+    const fg = ctx.createLinearGradient(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
+    fg.addColorStop(0, COLORS.floorLight);
+    fg.addColorStop(1, COLORS.floorDark);
+    ctx.fillStyle = fg;
     ctx.beginPath();
     ctx.moveTo(corners[0].x, corners[0].y);
     ctx.lineTo(corners[1].x, corners[1].y);
@@ -219,9 +232,9 @@ class Renderer {
     ctx.closePath();
     ctx.fill();
 
-    // 菱形地砖网格
-    ctx.strokeStyle = COLORS.grout;
-    ctx.lineWidth = 1;
+    // 木地板拼缝（沿一个方向的木纹条）
+    ctx.strokeStyle = COLORS.plank;
+    ctx.lineWidth = 1.4;
     for (let i = 0; i <= tiles; i++) {
       const a = this.toIso(i / tiles, 0);
       const b = this.toIso(1, i / tiles);
@@ -229,13 +242,20 @@ class Renderer {
       ctx.moveTo(a.x, a.y);
       ctx.lineTo(b.x, b.y);
       ctx.stroke();
-
-      const c = this.toIso(0, i / tiles);
-      const d = this.toIso(i / tiles, 1);
-      ctx.beginPath();
-      ctx.moveTo(c.x, c.y);
-      ctx.lineTo(d.x, d.y);
-      ctx.stroke();
+    }
+    // 横向短缝（错落木板感）
+    ctx.lineWidth = 0.8;
+    ctx.strokeStyle = 'rgba(90,58,31,0.45)';
+    for (let i = 0; i <= tiles; i++) {
+      const off = (i % 2) * 0.12;
+      for (let j = 0; j < tiles; j += 2) {
+        const p1 = this.toIso(j / tiles + off, i / tiles);
+        const p2 = this.toIso((j + 1) / tiles + off, i / tiles);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
     }
 
     // 入口红毯
@@ -251,8 +271,6 @@ class Renderer {
     ctx.lineTo(r3.x, r3.y);
     ctx.closePath();
     ctx.fill();
-
-    // 地毯纹路
     ctx.strokeStyle = COLORS.carpetDark;
     ctx.lineWidth = 1.5;
     for (let i = 1; i < 5; i++) {
@@ -267,6 +285,26 @@ class Renderer {
     ctx.restore();
   }
 
+  _drawRug() {
+    const ctx = this.ctx;
+    const c = this.toIso(0.5, 0.5);
+    const scale = this.iso.scale;
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    ctx.fillStyle = COLORS.rug;
+    ctx.globalAlpha = 0.55;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 150 * scale, 80 * scale, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 0.9;
+    ctx.strokeStyle = COLORS.rugEdge;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 150 * scale, 80 * scale, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   _drawWalls() {
     const ctx = this.ctx;
     const hWall = this.iso.th * 2.6;
@@ -278,20 +316,37 @@ class Renderer {
 
     ctx.save();
 
-    // 后墙：奶油墙面 + 木框大窗
-    ctx.fillStyle = COLORS.wall;
+    // 后墙：上部奶油 + 下部木护墙板
+    const bTopY = backLeft.y - hWall;
+    ctx.fillStyle = COLORS.wallUpper;
     ctx.beginPath();
     ctx.moveTo(backLeft.x, backLeft.y);
     ctx.lineTo(backRight.x, backRight.y);
-    ctx.lineTo(backRight.x, backRight.y - hWall);
-    ctx.lineTo(backLeft.x, backLeft.y - hWall);
+    ctx.lineTo(backRight.x, backRight.y - hWall * 0.62);
+    ctx.lineTo(backLeft.x, backLeft.y - hWall * 0.62);
     ctx.closePath();
     ctx.fill();
-    ctx.strokeStyle = COLORS.wallTrim;
-    ctx.lineWidth = trim * 0.5;
-    ctx.stroke();
+    // 护墙板
+    ctx.fillStyle = COLORS.wainscot;
+    ctx.beginPath();
+    ctx.moveTo(backLeft.x, backLeft.y - hWall * 0.62);
+    ctx.lineTo(backRight.x, backRight.y - hWall * 0.62);
+    ctx.lineTo(backRight.x, backRight.y);
+    ctx.lineTo(backLeft.x, backLeft.y);
+    ctx.closePath();
+    ctx.fill();
+    // 护墙板横向木纹
+    ctx.strokeStyle = COLORS.wainscotDark;
+    ctx.lineWidth = 1;
+    for (let i = 1; i <= 3; i++) {
+      const t = (hWall * 0.62) * (i / 4);
+      ctx.beginPath();
+      ctx.moveTo(backLeft.x, backLeft.y - t);
+      ctx.lineTo(backRight.x, backRight.y - t);
+      ctx.stroke();
+    }
 
-    // 后墙大窗（中间区域）
+    // 后墙大窗
     const bw1 = this.toIso(0.10, 1, 0.28);
     const bw2 = this.toIso(0.90, 1, 0.28);
     const bw3 = this.toIso(0.90, 1, 0.92);
@@ -304,10 +359,9 @@ class Renderer {
     ctx.lineTo(bw4.x, bw4.y);
     ctx.closePath();
     ctx.fill();
-
-    // 后墙窗框十字
     ctx.strokeStyle = COLORS.windowFrame;
     ctx.lineWidth = trim * 0.4;
+    ctx.stroke();
     ctx.beginPath();
     const bwm = this.toIso(0.5, 1, 0.92);
     const bwb = this.toIso(0.5, 1, 0.28);
@@ -320,7 +374,7 @@ class Renderer {
     ctx.stroke();
 
     // 后墙踢脚线
-    ctx.strokeStyle = COLORS.wallTrimDark;
+    ctx.strokeStyle = COLORS.trimDark;
     ctx.lineWidth = trim * 0.5;
     ctx.beginPath();
     const kick1 = this.toIso(0, 1, 0.30);
@@ -329,20 +383,24 @@ class Renderer {
     ctx.lineTo(kick2.x, kick2.y);
     ctx.stroke();
 
-    // 左墙（大窗）
-    ctx.fillStyle = COLORS.wall;
+    // 左墙（同样护墙板 + 大窗）
+    ctx.fillStyle = COLORS.wallUpper;
     ctx.beginPath();
     ctx.moveTo(backLeft.x, backLeft.y);
     ctx.lineTo(frontLeft.x, frontLeft.y);
-    ctx.lineTo(frontLeft.x, frontLeft.y - hWall);
-    ctx.lineTo(backLeft.x, backLeft.y - hWall);
+    ctx.lineTo(frontLeft.x, frontLeft.y - hWall * 0.62);
+    ctx.lineTo(backLeft.x, backLeft.y - hWall * 0.62);
     ctx.closePath();
     ctx.fill();
-    ctx.strokeStyle = COLORS.wallTrim;
-    ctx.lineWidth = trim * 0.5;
-    ctx.stroke();
+    ctx.fillStyle = COLORS.wainscot;
+    ctx.beginPath();
+    ctx.moveTo(backLeft.x, backLeft.y - hWall * 0.62);
+    ctx.lineTo(frontLeft.x, frontLeft.y - hWall * 0.62);
+    ctx.lineTo(frontLeft.x, frontLeft.y);
+    ctx.lineTo(backLeft.x, backLeft.y);
+    ctx.closePath();
+    ctx.fill();
 
-    // 左墙大窗（沿墙的等角多边形）
     const lw1 = this.toIso(0, 0.12, 0.22);
     const lw2 = this.toIso(0, 0.88, 0.22);
     const lw3 = this.toIso(0, 0.88, 0.92);
@@ -355,9 +413,9 @@ class Renderer {
     ctx.lineTo(lw4.x, lw4.y);
     ctx.closePath();
     ctx.fill();
-
     ctx.strokeStyle = COLORS.windowFrame;
     ctx.lineWidth = trim * 0.35;
+    ctx.stroke();
     ctx.beginPath();
     const lwm = this.toIso(0, 0.50, 0.92);
     const lwb = this.toIso(0, 0.50, 0.22);
@@ -369,15 +427,14 @@ class Renderer {
     ctx.lineTo(lwh2.x, lwh2.y);
     ctx.stroke();
 
-    // 右侧开放，只画一道矮木护栏
-    ctx.strokeStyle = COLORS.wallTrim;
+    // 右侧开放，矮木护栏
+    ctx.strokeStyle = COLORS.trim;
     ctx.lineWidth = trim * 0.5;
     ctx.beginPath();
     ctx.moveTo(backRight.x, backRight.y);
     ctx.lineTo(frontRight.x, frontRight.y);
     ctx.stroke();
-    // 护栏柱
-    ctx.fillStyle = COLORS.wallTrimDark;
+    ctx.fillStyle = COLORS.trimDark;
     for (let i = 0; i <= 4; i++) {
       const p = this.toIso(1, i / 4, 0);
       ctx.fillRect(p.x - 3, p.y - hWall * 0.12, 6, hWall * 0.12);
@@ -386,18 +443,42 @@ class Renderer {
     // 窗台盆栽
     this._drawPlant(0.04, 0.95);
     this._drawPlant(0.96, 0.95);
+    // 壁灯（侧墙）
+    this._drawSconce(0, 0.30);
+    this._drawSconce(0, 0.70);
 
     ctx.restore();
   }
 
+  _drawSconce(x, y) {
+    const ctx = this.ctx;
+    const base = this.toIso(x, y, 0.5);
+    const scale = this.iso.scale;
+    ctx.save();
+    ctx.translate(base.x, base.y);
+    ctx.fillStyle = COLORS.wainscotDark;
+    ctx.fillRect(-3 * scale, -10 * scale, 6 * scale, 10 * scale);
+    const glow = ctx.createRadialGradient(0, -10 * scale, 0, 0, -10 * scale, 16 * scale);
+    glow.addColorStop(0, 'rgba(255,221,150,0.5)');
+    glow.addColorStop(1, 'rgba(255,221,150,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, -10 * scale, 16 * scale, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = COLORS.gold;
+    ctx.beginPath();
+    ctx.arc(0, -10 * scale, 3 * scale, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
   _drawPictures() {
-    // 后墙挂画
-    this._drawPicture(0.3, 1, '🍷');
-    this._drawPicture(0.7, 1, '🍴');
+    this._drawPicture(0.30, 1, '🍷');
+    this._drawPicture(0.70, 1, '🍴');
   }
 
   _drawLights() {
-    // 吊灯（最后画，光晕覆盖在桌面上方）
+    // 吊灯 + 落地光晕
     this._drawLight(0.28, 0.32);
     this._drawLight(0.72, 0.32);
     this._drawLight(0.28, 0.68);
@@ -408,16 +489,27 @@ class Renderer {
     const ctx = this.ctx;
     const pos = this.toIso(x, y, 1.25);
     const scale = this.iso.scale;
+    // 落地光晕池
+    const ground = this.toIso(x, y, 0);
+    const night = this._isNight();
+    const pool = ctx.createRadialGradient(ground.x, ground.y, 0, ground.x, ground.y, 70 * scale);
+    pool.addColorStop(0, night ? 'rgba(255,214,140,0.35)' : 'rgba(255,236,180,0.22)');
+    pool.addColorStop(1, 'rgba(255,236,180,0)');
+    ctx.save();
+    ctx.fillStyle = pool;
+    ctx.beginPath();
+    ctx.ellipse(ground.x, ground.y, 70 * scale, 36 * scale, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
     ctx.save();
     ctx.translate(pos.x, pos.y);
-    // 吊线
     ctx.strokeStyle = 'rgba(80,60,40,0.5)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(0, 22 * scale);
     ctx.stroke();
-    // 灯罩
     ctx.fillStyle = '#d4a373';
     ctx.beginPath();
     ctx.moveTo(-8 * scale, 20 * scale);
@@ -426,9 +518,8 @@ class Renderer {
     ctx.lineTo(-10 * scale, 26 * scale);
     ctx.closePath();
     ctx.fill();
-    // 光晕
     const glow = ctx.createRadialGradient(0, 28 * scale, 0, 0, 28 * scale, 22 * scale);
-    glow.addColorStop(0, 'rgba(255,240,180,0.55)');
+    glow.addColorStop(0, COLORS.lampGlow);
     glow.addColorStop(1, 'rgba(255,240,180,0)');
     ctx.fillStyle = glow;
     ctx.beginPath();
@@ -460,7 +551,7 @@ class Renderer {
     const center = this.toIso(cxNorm, cyNorm, 0.55);
     ctx.save();
     ctx.fillStyle = '#f3e5ab';
-    ctx.strokeStyle = COLORS.wallTrimDark;
+    ctx.strokeStyle = COLORS.wainscotDark;
     ctx.lineWidth = 3;
     ctx.fillRect(center.x - 16, center.y - 12, 32, 24);
     ctx.strokeRect(center.x - 16, center.y - 12, 32, 24);
@@ -473,7 +564,6 @@ class Renderer {
 
   _drawKitchen() {
     const ctx = this.ctx;
-    // 厨房缩在右后角，不遮挡餐桌
     const p1 = this.toIso(0.60, 0.98, 0);
     const p2 = this.toIso(0.98, 0.98, 0);
     const p3 = this.toIso(0.98, 0.98, 0.28);
@@ -481,7 +571,6 @@ class Renderer {
     const topY = p3.y;
 
     ctx.save();
-    // 柜体
     ctx.fillStyle = COLORS.kitchen;
     ctx.beginPath();
     ctx.moveTo(p1.x, p1.y);
@@ -490,7 +579,6 @@ class Renderer {
     ctx.lineTo(p4.x, p4.y);
     ctx.closePath();
     ctx.fill();
-    // 台面
     ctx.fillStyle = COLORS.kitchenTop;
     ctx.beginPath();
     ctx.moveTo(p4.x, p4.y);
@@ -499,17 +587,14 @@ class Renderer {
     ctx.lineTo(p4.x, p4.y - 5);
     ctx.closePath();
     ctx.fill();
-    // 厨具
     ctx.fillStyle = COLORS.steel;
     ctx.fillRect(p1.x + 14, topY + 5, 36, 20);
     ctx.fillRect(p2.x - 50, topY + 5, 32, 20);
-    // 炉灶圈
     ctx.fillStyle = '#374151';
     ctx.beginPath();
     ctx.arc(p1.x + 32, topY + 16, 5, 0, Math.PI * 2);
     ctx.arc(p2.x - 34, topY + 16, 5, 0, Math.PI * 2);
     ctx.fill();
-    // "厨房" 招牌
     ctx.fillStyle = 'rgba(255,255,255,0.95)';
     ctx.font = 'bold 12px sans-serif';
     ctx.textAlign = 'center';
@@ -524,7 +609,7 @@ class Renderer {
     const w = 48 * scale;
     const d = 32 * scale;
     const h = 18 * scale;
-    const clothH = 8 * scale; // 桌布下垂高度
+    const clothH = 8 * scale;
 
     let cloth = COLORS.clothFree;
     if (t.state === 'occupied' || t.occupied) cloth = COLORS.clothOcc;
@@ -534,10 +619,10 @@ class Renderer {
     ctx.translate(base.x, base.y);
 
     // 桌子投影
-    ctx.fillStyle = 'rgba(0,0,0,0.16)';
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
     this._isoRectShadow(0, 0, w * 1.1, d * 1.1);
 
-    // 桌腿（更细）
+    // 桌腿
     ctx.fillStyle = COLORS.tableBase;
     const legR = 3.5 * scale;
     this._isoLeg(-w * 0.38, d * 0.28, legR, h);
@@ -559,7 +644,7 @@ class Renderer {
     ctx.stroke();
 
     // 桌号
-    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
     ctx.font = `bold ${12 * scale}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -573,7 +658,6 @@ class Renderer {
       ctx.ellipse(-10 * scale, plateY, 8 * scale, 4.5 * scale, 0, 0, Math.PI * 2);
       ctx.ellipse(10 * scale, plateY, 8 * scale, 4.5 * scale, 0, 0, Math.PI * 2);
       ctx.fill();
-      // 食物色块
       ctx.fillStyle = '#fbbf24';
       ctx.beginPath();
       ctx.ellipse(-10 * scale, plateY, 5 * scale, 3 * scale, 0, 0, Math.PI * 2);
@@ -605,7 +689,6 @@ class Renderer {
     const ctx = this.ctx;
     const topY = cy - h;
     const baseColor = fillColor || ctx.fillStyle;
-    // 顶面
     ctx.fillStyle = baseColor;
     ctx.beginPath();
     ctx.moveTo(cx, topY + d * 0.5);
@@ -615,7 +698,6 @@ class Renderer {
     ctx.closePath();
     ctx.fill();
 
-    // 右侧面（较暗）
     ctx.fillStyle = this._shade(baseColor, -0.18);
     ctx.beginPath();
     ctx.moveTo(cx + w * 0.5, topY);
@@ -625,7 +707,6 @@ class Renderer {
     ctx.closePath();
     ctx.fill();
 
-    // 左侧面（稍亮）
     ctx.fillStyle = this._shade(baseColor, -0.08);
     ctx.beginPath();
     ctx.moveTo(cx - w * 0.5, topY);
@@ -676,31 +757,32 @@ class Renderer {
   }
 
   _drawCustomer(c) {
-    this._drawPerson(c.x, c.y, c.z || 0, this._customerPalette(c), c.state, c.patience, c.patienceMax || c.maxPatience);
+    this._drawPerson(c.x, c.y, c.z || 0, this._customerPalette(c), c.state, c.patience, c.patienceMax || c.maxPatience, null, c.id);
   }
 
   _drawWaiter(w) {
-    this._drawPerson(w.x, w.y, w.z || 0, { body: '#1f2937', apron: '#f9fafb', head: '#fde68a', hat: 'waiter' }, w.state || 'idle', null, null, w.actionEmoji);
+    this._drawPerson(w.x, w.y, w.z || 0, { body: '#1f2937', apron: '#f9fafb', head: '#fde68a', hat: 'waiter' }, w.state || 'idle', null, null, w.actionEmoji, 'waiter');
   }
 
   _drawChef(c) {
-    this._drawPerson(c.x, c.y, c.z || 0, { body: '#ffffff', apron: '#ffffff', head: '#fde68a', hat: 'chef' }, c.state || 'idle', null, null, null);
+    this._drawPerson(c.x, c.y, c.z || 0, { body: '#ffffff', apron: '#ffffff', head: '#fde68a', hat: 'chef' }, c.state || 'idle', null, null, null, 'chef');
   }
 
   _customerPalette(c) {
     const colors = TYPE_COLORS[c.type] || TYPE_COLORS.normal;
+    const idHash = (c.id || 'x').split('').reduce((a, ch) => a + ch.charCodeAt(0), 0);
     return {
       body: colors[0],
       head: '#fde68a',
-      hair: colors[2] || colors[1],
+      hair: HAIR_COLORS[idHash % HAIR_COLORS.length],
       hat: 'none'
     };
   }
 
-  _drawPerson(x, y, z, palette, state, patience, maxPatience, emoji) {
+  _drawPerson(x, y, z, palette, state, patience, maxPatience, emoji, idTag, role) {
     const ctx = this.ctx;
     const pos = this.toIso(x, y, z);
-    const scale = this.iso.scale * 1.15;
+    const scale = this.iso.scale * 1.22;
     const baseY = pos.y;
 
     ctx.save();
@@ -712,13 +794,16 @@ class Renderer {
     ctx.ellipse(0, 0, 12 * scale, 5 * scale, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // 腿（小短腿）
-    ctx.fillStyle = '#1f2937';
-    ctx.fillRect(-6 * scale, -5 * scale, 4.5 * scale, 6 * scale);
-    ctx.fillRect(1.5 * scale, -5 * scale, 4.5 * scale, 6 * scale);
+    // 鞋
+    ctx.fillStyle = '#2b2b2b';
+    ctx.fillRect(-6 * scale, -6 * scale, 5 * scale, 4 * scale);
+    ctx.fillRect(1.5 * scale, -6 * scale, 5 * scale, 4 * scale);
 
-    // 身体（小梯形）
-    ctx.fillStyle = palette.body;
+    // 身体（小梯形，带渐变）
+    const bg = ctx.createLinearGradient(0, -17 * scale, 0, -5 * scale);
+    bg.addColorStop(0, this._shade(palette.body, 0.12));
+    bg.addColorStop(1, palette.body);
+    ctx.fillStyle = bg;
     ctx.beginPath();
     ctx.moveTo(-9 * scale, -17 * scale);
     ctx.lineTo(9 * scale, -17 * scale);
@@ -726,6 +811,9 @@ class Renderer {
     ctx.lineTo(-12 * scale, -5 * scale);
     ctx.closePath();
     ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
     // 围裙 / 服务员围兜
     if (palette.apron) {
@@ -746,18 +834,20 @@ class Renderer {
     ctx.ellipse(10 * scale, -11 * scale, 3.5 * scale, 2 * scale, 0.3, 0, Math.PI * 2);
     ctx.fill();
 
-    // 头（大圆头 Q 版）
+    // 头（大圆头 Q 版）+ 描边
     ctx.fillStyle = palette.head;
     ctx.beginPath();
     ctx.arc(0, -27 * scale, 11 * scale, 0, Math.PI * 2);
     ctx.fill();
+    ctx.strokeStyle = 'rgba(120,80,40,0.35)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
 
     // 头发
     ctx.fillStyle = palette.hair || '#4b5563';
     ctx.beginPath();
     ctx.arc(0, -30 * scale, 11 * scale, Math.PI, Math.PI * 2);
     ctx.fill();
-    // 刘海
     ctx.beginPath();
     ctx.moveTo(-9 * scale, -32 * scale);
     ctx.quadraticCurveTo(0, -25 * scale, 9 * scale, -32 * scale);
@@ -767,19 +857,18 @@ class Renderer {
     ctx.fill();
 
     // 腮红
-    ctx.fillStyle = 'rgba(255,160,160,0.35)';
+    ctx.fillStyle = 'rgba(255,150,150,0.4)';
     ctx.beginPath();
     ctx.arc(-6 * scale, -25 * scale, 2.2 * scale, 0, Math.PI * 2);
     ctx.arc(6 * scale, -25 * scale, 2.2 * scale, 0, Math.PI * 2);
     ctx.fill();
 
-    // 眼睛（大圆点眼）
+    // 眼睛
     ctx.fillStyle = '#1f2937';
     ctx.beginPath();
     ctx.arc(-4 * scale, -28 * scale, 2 * scale, 0, Math.PI * 2);
     ctx.arc(4 * scale, -28 * scale, 2 * scale, 0, Math.PI * 2);
     ctx.fill();
-    // 高光
     ctx.fillStyle = '#fff';
     ctx.beginPath();
     ctx.arc(-4.8 * scale, -29 * scale, 0.7 * scale, 0, Math.PI * 2);
@@ -792,14 +881,13 @@ class Renderer {
     ctx.arc(0, -23 * scale, 1 * scale, 0, Math.PI);
     ctx.fill();
 
-    // 帽子 / 头饰
+    // 帽子
     if (palette.hat === 'chef') {
       ctx.fillStyle = '#fff';
       ctx.fillRect(-11 * scale, -40 * scale, 22 * scale, 9 * scale);
       ctx.fillStyle = '#e5e7eb';
       ctx.fillRect(-9 * scale, -42 * scale, 18 * scale, 3 * scale);
     } else if (palette.hat === 'waiter') {
-      // 女仆发箍
       ctx.fillStyle = '#fff';
       ctx.fillRect(-10 * scale, -39 * scale, 20 * scale, 5 * scale);
       ctx.fillStyle = '#9ca3af';
@@ -819,7 +907,6 @@ class Renderer {
       ctx.stroke();
     }
 
-    // 状态符号
     if (emoji) {
       this._drawEmojiBubble(0, -55 * scale, emoji);
     }
@@ -856,8 +943,8 @@ class Renderer {
       const c = queue[i];
       ctx.save();
       ctx.translate(pos.x, pos.y);
-      // 小头像
-      ctx.fillStyle = (TYPE_COLORS[c.type] || TYPE_COLORS.normal)[0];
+      const cols = (TYPE_COLORS[c.type] || TYPE_COLORS.normal)[0];
+      ctx.fillStyle = cols;
       ctx.beginPath();
       ctx.arc(0, -16, 9, 0, Math.PI * 2);
       ctx.fill();
@@ -865,7 +952,6 @@ class Renderer {
       ctx.beginPath();
       ctx.arc(0, -22, 6, 0, Math.PI * 2);
       ctx.fill();
-      // 耐心点
       const ratio = Math.max(0, c.patience / (c.patienceMax || c.maxPatience || 1));
       ctx.fillStyle = ratio > 0.5 ? '#22c55e' : ratio > 0.25 ? '#f59e0b' : '#ef4444';
       ctx.beginPath();
@@ -928,7 +1014,6 @@ class Renderer {
     const scale = this.iso.scale;
     ctx.save();
     ctx.translate(pos.x, pos.y);
-    // 门牌
     ctx.fillStyle = 'rgba(124,58,237,0.9)';
     const w = 56 * scale, h = 20 * scale, r = 4 * scale;
     ctx.beginPath();
@@ -955,6 +1040,7 @@ class Renderer {
   }
 
   _shade(hex, amount) {
+    if (!hex || hex[0] !== '#' || hex.length < 7) return hex;
     const num = parseInt(hex.replace('#', ''), 16);
     const r = Math.min(255, Math.max(0, (num >> 16) + amount * 255));
     const g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + amount * 255));
