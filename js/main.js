@@ -6,8 +6,10 @@ import { createRenderer } from './renderer.js';
 import { Game } from './game.js';
 
 async function boot() {
+  console.log('boot start');
   try {
     await State.loadConfigs();
+    console.log('configs loaded');
   } catch (e) {
     console.error('配置加载失败', e);
     document.body.insertAdjacentHTML(
@@ -20,28 +22,38 @@ async function boot() {
     return;
   }
 
-  const state = State.newGameState();
-  State.setState(state);
-  const renderer = createRenderer('restaurant-canvas', state);
+  try {
+    const state = State.newGameState();
+    State.setState(state);
+    console.log('state created');
+    const renderer = createRenderer('restaurant-canvas', state);
+    console.log('renderer created');
 
-  const game = new Game(state, renderer);
-  game.onHud = () => UI.updateHUD();
-  game.onDayEnd = (s) => { Save.save(s); UI.showDayReport(s); };
-  game.onMonthEnd = (s, r) => { Save.save(s); UI.showMonthReport(s, r); };
-  game.onEvent = (ev) => UI.showEventToast(ev);
+    const game = new Game(state, renderer);
+    console.log('game created');
+    game.onHud = () => UI.updateHUD();
+    game.onDayEnd = (s) => { Save.save(s); UI.showDayReport(s); };
+    game.onMonthEnd = (s, r) => { Save.save(s); UI.showMonthReport(s, r); };
+    game.onEvent = (ev) => UI.showEventToast(ev);
 
-  UI.initUI({
-    onToggleOpen: (op) => {
-      if (op) game.start();
-      else game.stop();
-    },
-    // 新游戏 / 读档：把新的 state 换绑到游戏循环与渲染器
-    onStateChange: (s) => {
-      game.setState(s);
-      renderer.setState(s);
-    },
-  });
-  UI.updateHUD();
+    console.log('initUI start');
+    UI.initUI({
+      onToggleOpen: (op) => {
+        if (op) game.start();
+        else game.stop();
+      },
+      // 新游戏 / 读档：把新的 state 换绑到游戏循环与渲染器
+      onStateChange: (s) => {
+        game.setState(s);
+        renderer.setState(s);
+      },
+    });
+    console.log('initUI done');
+    UI.updateHUD();
+    console.log('hud updated');
+  } catch (e) {
+    console.error('boot inner error', e);
+  }
 
   registerSW();
 }
