@@ -782,7 +782,7 @@ class Renderer {
   _drawPerson(x, y, z, palette, state, patience, maxPatience, emoji, idTag, role) {
     const ctx = this.ctx;
     const pos = this.toIso(x, y, z);
-    const scale = this.iso.scale * 1.22;
+    const scale = this.iso.scale * 1.55;
     const baseY = pos.y;
 
     ctx.save();
