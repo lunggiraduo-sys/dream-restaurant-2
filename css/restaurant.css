@@ -1,0 +1,60 @@
+/* 梦幻西餐厅2 · 餐厅经营屏（状态栏 / KPI / 画布 / 操作栏） */
+#screen-restaurant{background:#f3eee6;}
+
+/* 顶部系统状态栏 */
+.statusbar{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:10px 16px;background:linear-gradient(90deg,#7c3aed,#6d28d9);color:#fff;
+  font-size:14px;font-weight:600;
+  padding-top:calc(10px + env(safe-area-inset-top));
+  box-shadow:0 2px 10px rgba(124,58,237,.25);
+}
+#sys-name{font-size:13px;opacity:.92;font-weight:700;letter-spacing:1px;}
+
+/* KPI 栏 */
+.kpibar{
+  display:flex;gap:7px;padding:9px 11px;background:#fff;
+  border-bottom:1px solid var(--line);overflow-x:auto;
+  scrollbar-width:none;
+}
+.kpibar::-webkit-scrollbar{display:none;}
+.kpi{
+  flex:1 0 auto;min-width:72px;white-space:nowrap;
+  background:linear-gradient(180deg,#f6f2fb,#efe7fb);color:var(--primary-d);
+  border-radius:11px;padding:8px 6px;text-align:center;font-size:12.5px;font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* 画布区 */
+.canvas-wrap{
+  position:relative;flex:1;min-height:0;
+  background:linear-gradient(180deg,#fbf7ef 0%,#f3e7d3 100%);
+}
+#restaurant-canvas{width:100%;height:100%;display:block;}
+.canvas-hint{
+  position:absolute;left:50%;top:14px;transform:translateX(-50%);
+  background:rgba(43,37,64,.82);color:#fff;font-size:12px;padding:6px 14px;border-radius:20px;
+  white-space:nowrap;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+/* 加速按钮（右上浮层，仿原作快进） */
+.speed-btn{
+  position:absolute;top:10px;right:10px;z-index:5;
+  border:none;background:rgba(43,37,64,.78);color:#ffd86b;
+  font-size:13px;font-weight:700;padding:7px 12px;border-radius:20px;cursor:pointer;
+  box-shadow:0 3px 10px rgba(0,0,0,.25);touch-action:manipulation;
+}
+.speed-btn:active{transform:scale(.94);}
+
+/* 操作栏 */
+.opbar{
+  display:flex;gap:6px;padding:8px;background:#fff;border-top:1px solid var(--line);
+  padding-bottom:calc(8px + env(safe-area-inset-bottom));
+}
+.op{
+  flex:1;border:none;background:#f0ebf7;color:var(--primary-d);
+  border-radius:12px;padding:12px 4px;font-size:14px;font-weight:600;cursor:pointer;
+  transition:transform .08s ease;touch-action:manipulation;
+}
+.op:active{transform:scale(.94);}
+.op-go{background:linear-gradient(180deg,#8b5cf6,#7c3aed);color:#fff;font-weight:700;box-shadow:0 4px 12px rgba(124,58,237,.35);}
+.op-go.operating{background:linear-gradient(180deg,#34d399,#10b981);box-shadow:0 4px 12px rgba(16,185,129,.35);}
