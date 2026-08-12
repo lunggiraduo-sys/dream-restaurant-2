@@ -1,0 +1,8 @@
+# 截图/预览图（非游戏运行所需）
+preview_day.png
+preview_night.png
+*.png.bak
+
+# 系统/编辑残留
+.DS_Store
+*.log
