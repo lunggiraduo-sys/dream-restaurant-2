@@ -1,6 +1,6 @@
 // 梦幻西餐厅2 · Service Worker（PWA 离线缓存）
 // 策略：stale-while-revalidate（先返回缓存，后台静默更新）→ 既快又有离线，且升级后不会永久卡在旧版
-const CACHE = 'dr2-v9';
+const CACHE = 'dr2-v10';
 const ASSETS = [
   './',
   './index.html',
