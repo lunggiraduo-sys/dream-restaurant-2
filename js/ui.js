@@ -138,7 +138,6 @@ export function updateHUD() {
 }
 
 function handleAction(a) {
-  console.log('handleAction:', a);
   switch (a) {
     case 'new': {
       const s = State.newGameState();
@@ -199,7 +198,6 @@ function handleAction(a) {
 }
 
 export function initUI({ onToggleOpen, onStateChange } = {}) {
-  console.log('initUI entry; data-action count=', document.querySelectorAll('[data-action]').length, 'data-screen count=', document.querySelectorAll('[data-screen]').length);
   _onToggleOpen = onToggleOpen;
   _onStateChange = onStateChange;
   $all('[data-screen]').forEach((btn) => {
@@ -208,7 +206,6 @@ export function initUI({ onToggleOpen, onStateChange } = {}) {
   $all('[data-action]').forEach((btn) => {
     btn.addEventListener('click', () => handleAction(btn.getAttribute('data-action')));
   });
-  console.log('initUI listeners attached');
 
   // 员工管理：雇佣 / 解雇（事件委托）
   const staffBody = $('#staff-body');
