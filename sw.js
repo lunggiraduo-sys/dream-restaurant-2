@@ -1,5 +1,6 @@
 // 梦幻西餐厅2 · Service Worker（PWA 离线缓存）
-const CACHE = 'dr2-v2';
+// 策略：stale-while-revalidate（先返回缓存，后台静默更新）→ 既快又有离线，且升级后不会永久卡在旧版
+const CACHE = 'dr2-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -28,17 +29,31 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches.open(CACHE).then((c) => c.addAll(ASSETS).catch(() => {})).then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())
+    caches.keys()
+      .then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (e) => {
+  if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then((r) => r || fetch(e.request).catch(() => caches.match('./index.html')))
+    caches.match(e.request).then((cached) => {
+      const network = fetch(e.request).then((resp) => {
+        if (resp && resp.status === 200 && resp.type === 'basic') {
+          const copy = resp.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, copy));
+        }
+        return resp;
+      }).catch(() => cached);
+      return cached || network;
+    })
   );
 });
