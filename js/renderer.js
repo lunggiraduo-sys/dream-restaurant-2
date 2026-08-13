@@ -4,11 +4,11 @@
  */
 
 const COLORS = {
-  // 暖色木地板
-  floorA: '#a9743f',
-  floorB: '#6f4626',
-  floorHi: '#c08a52',
-  plankSeam: 'rgba(70,44,22,0.45)',
+  // 暖色木地板（明亮温暖）
+  floorA: '#c0945c',
+  floorB: '#8f6238',
+  floorHi: '#d6a86e',
+  plankSeam: 'rgba(90,58,30,0.40)',
   // 墙面（奶油 + 木护墙板）
   wallTop: '#fdf3df',
   wallBot: '#ecdcbd',
@@ -897,7 +897,7 @@ class Renderer {
     const spr = spriteKey ? this._ensureSprite(spriteKey) : null;
     if (spr && spr.ready) {
       const bb = spr.bbox;
-      const chH = this.iso.scale * 1.5 * 72;
+      const chH = this.iso.scale * 1.5 * 90;
       const bw = bb.maxX - bb.minX, bh = bb.maxY - bb.minY;
       const dw = chH * (bw / bh), dh = chH;
       ctx.imageSmoothingEnabled = true;
@@ -1272,7 +1272,7 @@ class Renderer {
     // 暖色暗角
     const v = ctx.createRadialGradient(w / 2, h * 0.5, Math.min(w, h) * 0.35, w / 2, h * 0.5, Math.max(w, h) * 0.75);
     v.addColorStop(0, 'rgba(0,0,0,0)');
-    v.addColorStop(1, this._isNight() ? 'rgba(10,8,20,0.42)' : 'rgba(60,30,10,0.20)');
+    v.addColorStop(1, this._isNight() ? 'rgba(10,8,20,0.30)' : 'rgba(90,55,20,0.12)');
     ctx.fillStyle = v;
     ctx.fillRect(0, 0, w, h);
   }
